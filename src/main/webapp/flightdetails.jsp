@@ -25,7 +25,7 @@
 		</tr>
 		<tr>
 			<td>Flight team details</td>
-			<td>${requestScope.flight.team}</td>
+			<td>${requestScope.flight.flightTeam}</td>
 		</tr>
 
 	</table>

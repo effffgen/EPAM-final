@@ -18,7 +18,7 @@ import ua.nure.baranov.entity.Flight;
 
 public class MySQLFlightDAO implements FlightDAO{
 	private static final Logger LOGGER = LogManager.getLogger();
-	private static final String FIND_FLIGHTS_QUERY = "SELECT * from flight";
+	private static final String FIND_FLIGHTS_QUERY = "SELECT * FROM flight";
 	private static FlightDAO instance = null;
 	
 	private static final int ID_FIELD = 1;
@@ -27,7 +27,7 @@ public class MySQLFlightDAO implements FlightDAO{
 	private static final int FLIGHT_DATE_FIELD = 4;
 	private static final int PLANE_ID_FIELD = 5;
 	private static final int TEAM_ID_FIELD = 6;
-	private static final String FIND_BY_ID_QUERY = null;
+	private static final String FIND_BY_ID_QUERY = "SELECT * FROM flight WHERE id = ?";
 	
 	
 	
@@ -82,6 +82,7 @@ public class MySQLFlightDAO implements FlightDAO{
 		try {
 			connection  = MySQLDAOUtils.getConnection(true);
 			stmt = connection.prepareStatement(FIND_BY_ID_QUERY);
+			stmt.setInt(1, id);
 			rs = stmt.executeQuery();
 			Flight flight = null;
 			if(rs.next()) {
