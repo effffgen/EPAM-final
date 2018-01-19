@@ -4,7 +4,11 @@ public class Plane extends Entity{
 	public Plane(Integer id) {
 		super(id);
 	}
-
+	
+	public Plane() {
+		
+	}
+	
 	private String name;
 
 	public String getName() {

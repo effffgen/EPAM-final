@@ -14,30 +14,35 @@ import ua.nure.baranov.dao.UserDAO;
 import ua.nure.baranov.entity.Role;
 import ua.nure.baranov.entity.User;
 
-public class MySQLUserDAO implements UserDAO{
+public class MySQLUserDAO implements UserDAO {
 	private static final int ID_FIELD = 1;
 	private static final int USERNAME_FIELD = 2;
-	private static final int PASSWORD_FIELD = 3;
-	private static final int ROLE_FIELD = 4;
-	private static final int EMAIL_FIELD = 5;
-	private static final int CREATION_TIME_FIELD = 6;
-	
+	private static final int FIRSTNAME_FIELD = 3;
+	private static final int LASTNAME_FIELD = 4;
+	private static final int PASSWORD_FIELD = 5;
+	private static final int ROLE_FIELD = 6;
+	private static final int EMAIL_FIELD = 7;
+	private static final int CREATION_TIME_FIELD = 8;
+
 	private static MySQLUserDAO instance;
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final String FIND_BY_LOGIN_PASS_QUERY = "SELECT * FROM user WHERE user.username=? AND user.password = ?";
 	private static final String FIND_BY_ID_QUERY = "SELECT * FROM user WHERE user.id = ?";
+	private static final String IF_USERNAME_EXISTS_QUERY = "SELECT count(*) FROM user WHERE user.username = ?";
+
 	public static UserDAO getInstance() {
-		if(instance == null) {
+		if (instance == null) {
 			instance = new MySQLUserDAO();
 		}
 		return instance;
 	}
-	
-	private MySQLUserDAO(){}
+
+	private MySQLUserDAO() {
+	}
 
 	@Override
-	public User createUser(User user) throws DatabaseException{
-		
+	public User createUser(User user) throws DatabaseException {
+
 		return null;
 	}
 
@@ -54,12 +59,12 @@ public class MySQLUserDAO implements UserDAO{
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			connection  = MySQLDAOUtils.getConnection(true);
+			connection = MySQLDAOUtils.getConnection(true);
 			stmt = connection.prepareStatement(FIND_BY_LOGIN_PASS_QUERY);
 			stmt.setString(1, login);
 			stmt.setString(2, password);
 			rs = stmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				User user = new User();
 				user.setId(rs.getInt(ID_FIELD));
 				user.setUsername(rs.getString(USERNAME_FIELD));
@@ -69,16 +74,14 @@ public class MySQLUserDAO implements UserDAO{
 				user.setCreationTime(rs.getDate(CREATION_TIME_FIELD));
 				LOGGER.trace("Got user: " + user);
 				return user;
-			}
-			else {
+			} else {
 				LOGGER.trace("No appropriate users found");
 				return null;
 			}
 		} catch (SQLException e) {
 			LOGGER.error("Error during findByLoginPass: " + e.getMessage());
 			throw new DatabaseException(e);
-		}
-		finally {
+		} finally {
 			MySQLDAOUtils.close(rs);
 			MySQLDAOUtils.close(stmt);
 			MySQLDAOUtils.close(connection);
@@ -92,37 +95,62 @@ public class MySQLUserDAO implements UserDAO{
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			connection  = MySQLDAOUtils.getConnection(true);
+			connection = MySQLDAOUtils.getConnection(true);
 			stmt = connection.prepareStatement(FIND_BY_ID_QUERY);
 			stmt.setInt(1, id);
 			rs = stmt.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				User user = new User();
 				user.setId(rs.getInt(ID_FIELD));
 				user.setUsername(rs.getString(USERNAME_FIELD));
+				user.setFirstName(rs.getString(FIRSTNAME_FIELD));
+				user.setLastName(rs.getString(LASTNAME_FIELD));
 				user.setPassword(rs.getString(PASSWORD_FIELD));
 				user.setRole(Role.valueOf(rs.getString(ROLE_FIELD).toUpperCase()));
 				user.setEmail(rs.getString(EMAIL_FIELD));
 				user.setCreationTime(rs.getDate(CREATION_TIME_FIELD));
 				LOGGER.trace("Got user: " + user);
 				return user;
-			}
-			else {
+			} else {
 				LOGGER.trace("No appropriate users found");
 				return null;
 			}
 		} catch (SQLException e) {
 			LOGGER.error("Error during findById: " + e.getMessage());
 			throw new DatabaseException(e);
-		}
-		finally {
+		} finally {
 			MySQLDAOUtils.close(rs);
 			MySQLDAOUtils.close(stmt);
 			MySQLDAOUtils.close(connection);
 		}
 	}
-	
-	
 
+	@Override
+	public boolean isUsernameTaken(String username) throws DatabaseException {
+		LOGGER.trace("Checking username for availability");
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = MySQLDAOUtils.getConnection(true);
+			stmt = connection.prepareStatement(IF_USERNAME_EXISTS_QUERY);
+			stmt.setString(1, username);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getBoolean(1);
+			} else {
+				LOGGER.error("Count query returned no results, there might be an error in SQL syntax");
+				throw new DatabaseException("Count query returned no results, there might be an error in SQL syntax");
+			}
+		} catch (SQLException e) {
+			LOGGER.error("Error during isUsernameTaken: " + e.getMessage());
+			throw new DatabaseException(e);
+		} finally {
+			MySQLDAOUtils.close(rs);
+			MySQLDAOUtils.close(stmt);
+			MySQLDAOUtils.close(connection);
+
+		}
+	}
 
 }

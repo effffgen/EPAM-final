@@ -11,8 +11,21 @@ public class User extends Entity implements Loginable{
 	private Role role;
 	private String email;
 	private Date creationTime;
+	private String firstName;
+	private String lastName;
 	
-	
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 	public String getUsername() {
 		return username;
 	}
@@ -43,7 +56,9 @@ public class User extends Entity implements Loginable{
 	public void setCreationTime(Date creationTime) {
 		this.creationTime = creationTime;
 	}
-	
+	public String getFullName() {
+		return firstName + " " + lastName;
+	}
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + ", email="

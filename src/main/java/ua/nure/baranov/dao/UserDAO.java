@@ -14,4 +14,5 @@ public interface UserDAO {
 
 	User getUserByID(int id) throws DatabaseException;
 	
+	boolean isUsernameTaken(String username) throws DatabaseException;
 }

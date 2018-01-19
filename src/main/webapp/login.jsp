@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@include file="mui.jspf" %>
+<%@include file="jspf/mui.jspf" %>
 <title>Login page</title>
 </head>
 <body>
@@ -13,6 +13,7 @@ Username:<br>
 Password:<br>
 <input type="password" name="password"><br>
 <input type="submit" value="Login">
+<input type="button" value="Register" onclick="window.location.href='register'">
 </form>
 
 <p style="color:red">
