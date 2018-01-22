@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="jspf/mui.jspf"%>
+<%@ include file="jspf/header.jspf"%>
 <script>
 function showdetails(id){
 	alert('Kek');

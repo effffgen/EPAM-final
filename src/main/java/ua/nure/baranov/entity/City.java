@@ -26,6 +26,10 @@ public class City extends Entity{
 	public void setCountry(Country country) {
 		this.country = country;
 	}*/
-
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }

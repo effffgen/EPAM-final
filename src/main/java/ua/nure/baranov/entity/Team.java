@@ -55,4 +55,16 @@ public class Team extends Entity {
 	}
 	
 	
+	/**
+	 * Method that indicates readiness and completeness of the flight team. Flight team that is not complete cannot ...TODO: rewrite this 
+	 * TODO: Notifications if the team is not yet ready on the flight date.
+	 * @return
+	 */
+	public boolean getReadiness() {
+		if(firstPilot!=null && secondPilot != null && aeronavigator != null && attendants != null && attendants.size() >=2) {
+			return true;
+		}
+		return false;
+	}
+	
 }

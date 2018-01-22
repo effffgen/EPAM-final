@@ -1,3 +1,4 @@
+
 package ua.nure.baranov.server.logic;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.factory.DAOFactory;
 import ua.nure.baranov.entity.Flight;
+import ua.nure.baranov.server.Util;
 
 @WebServlet("/flightdetails")
 public class FlightDetails extends HttpServlet {
@@ -23,19 +25,15 @@ public class FlightDetails extends HttpServlet {
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String idString = req.getParameter("id");
+		LOGGER.debug("Details about flight " + idString + " requested");
 		if(idString == null) {
+			LOGGER.warn("No flight id was provided, sending to the dashboard");
 			resp.sendRedirect("dashboard");
 			return;
 		}
 		int id = Integer.valueOf(idString);
-		Flight flight = null;
-		try {
-			flight = DAOFactory.getDAOFactory().getFlightDAO().getFlightByID(id);
-		} catch (DatabaseException e) {
-			LOGGER.error("Unable to find flight with the id " + id);
-			throw new IOException(e);
-			//TODO: consider whether it is good or bad practice
-		}
+		Flight flight = Util.getFlight(id);
+		LOGGER.trace("Result --> " + flight);
 		req.setAttribute("flight", flight);
 		req.getRequestDispatcher("flightdetails.jsp").forward(req, resp);
 	}

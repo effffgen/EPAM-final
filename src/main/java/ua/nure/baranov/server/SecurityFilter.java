@@ -1,4 +1,4 @@
-/*package ua.nure.baranov.server;
+package ua.nure.baranov.server;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ua.nure.baranov.entity.Role;
 import ua.nure.baranov.entity.User;
@@ -34,8 +35,8 @@ import ua.nure.baranov.entity.User;
 		})
 public class SecurityFilter implements Filter {
 
-	private static final Logger LOGGER = Logger.getLogger(SecurityFilter.class);
-	private String contextPath = null;
+	private static final Logger LOGGER = LogManager.getLogger(SecurityFilter.class);
+	private String contextPath;
 	public SecurityFilter() {
       
     }
@@ -45,33 +46,37 @@ public class SecurityFilter implements Filter {
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest) request;
+	/*	HttpServletRequest req = (HttpServletRequest) request;
 		HttpSession session = req.getSession();
-		User user = null;
-		if (session.isNew()) {
-			user = new User();
-			session.setAttribute("user", user);
-		}
-		user = (User) session.getAttribute("user");
+		User user = (User) session.getAttribute("user");
 		LOGGER.trace("User --> " + user);
+			
 		
 		String contextPath = req.getServletContext().getContextPath();
 		LOGGER.trace("ContextPath --> " + contextPath);
 		
-		String resourse = req.getRequestURI().substring(contextPath.length());
-		LOGGER.trace("Resourse --> " + resourse);
+		String resource = req.getRequestURI().substring(contextPath.length());
+		LOGGER.trace("Resourse --> " + resource);
 		
-		if (!accept(user.getRole(), resourse)) {
-			((HttpServletResponse) response).sendRedirect(req.getContextPath() + "/login.jsp");
-			return;
+		if(user == null) {
+			if(!"/login".equals(resource)||"/login.jsp".equals(resource)) {
+				LOGGER.trace("Unregistered user is trying to get access to pages, redirecting to the login page");
+				((HttpServletResponse)response).sendRedirect("login");
+				return;
+			}
 		}
 		
+	/*	if (!accept(user.getRole(), resourse)) {
+			((HttpServletResponse) response).sendRedirect(req.getContextPath() + "/login.jsp");
+			
+		}
 		
+		*/
 		chain.doFilter(request, response);
 	}
 
 	
-	private boolean accept(Role role, String res) {
+/*	private boolean accept(Role role, String res) {
 		
 		String sRole = role == null ? null : role.toString();
 		
@@ -91,32 +96,11 @@ public class SecurityFilter implements Filter {
 			return true;
 		}
 		return false;
-	}
+	}*/
 	
-
-	public void init(FilterConfig fConfig) throws ServletException {
-		contextPath = fConfig.getServletContext().getContextPath();
-		log.debug("contextPath -->" + contextPath);
-		Enumeration<String> roles = fConfig.getInitParameterNames();
-		while (roles.hasMoreElements()) {
-			String role = (String) roles.nextElement();
-			LOGGER.debug("Init param -->" + role);
-			if (role.equals("userAttribute")) {
-				ua = fConfig.getInitParameter(role);
-				log.debug("User session attribute name -->" + ua);
-				continue;
-			}
-			String[] path = fConfig.getInitParameter(role).split(",");
-			Arrays.sort(path);
-			for (int i = 0; i < path.length; i++) {
-				path[i] = path[i].replace("*", ".*");
-			}
-			resourses.put(role, path);
-			LOGGER.debug("deny --> " + role + Arrays.toString(path));
-		}
-	}
-		LOGGER.info("Security filter started");
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+		
 	}
 
 }
-*/

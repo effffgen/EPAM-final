@@ -3,7 +3,7 @@ import java.util.Date;
 
 public class User extends Entity implements Loginable{
 	public User() {
-	
+		
 	}
 
 	private String username;
@@ -62,7 +62,9 @@ public class User extends Entity implements Loginable{
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + ", email="
-				+ email + ", creationTime=" + creationTime + "]";
+				+ email + ", creationTime=" + creationTime + ", firstName=" + firstName + ", lastName=" + lastName
+				+ "]";
 	}
+
 
 }

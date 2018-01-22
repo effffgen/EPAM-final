@@ -28,6 +28,7 @@ public class MySQLFlightDAO implements FlightDAO{
 	private static final int PLANE_ID_FIELD = 5;
 	private static final int TEAM_ID_FIELD = 6;
 	private static final String FIND_BY_ID_QUERY = "SELECT * FROM flight WHERE id = ?";
+	private static final String DELETE_BY_ID_QUERY = "DELETE FROM flight WHERE id = ?";
 	
 	
 	
@@ -57,7 +58,7 @@ public class MySQLFlightDAO implements FlightDAO{
 				flight.setFlightDate(rs.getDate(FLIGHT_DATE_FIELD));
 				flight.setDepart(DAOFactory.getDAOFactory().getCityDAO().getCityByID(rs.getInt(DEPART_ID_FIELD)));
 				flight.setDestination(DAOFactory.getDAOFactory().getCityDAO().getCityByID(rs.getInt(DEST_ID_FIELD)));
-				//flight.setFlightTeam(DAOFactory.getDAOFactory().getFlightTeamDAO().getTeamByID(rs.getInt(TEAM_ID_FIELD)));
+				flight.setFlightTeam(DAOFactory.getDAOFactory().getFlightTeamDAO().getTeamByID(rs.getInt(TEAM_ID_FIELD)));
 				flight.setPlane(DAOFactory.getDAOFactory().getPlaneDAO().getPlaneByID(rs.getInt(PLANE_ID_FIELD)));
 				flights.add(flight);
 			}
@@ -102,6 +103,31 @@ public class MySQLFlightDAO implements FlightDAO{
 		}
 		finally {
 			MySQLDAOUtils.close(rs);
+			MySQLDAOUtils.close(stmt);
+			MySQLDAOUtils.close(connection);
+		}
+	}
+
+	@Override
+	public boolean deleteFlightById(Integer id) throws DatabaseException {
+		LOGGER.trace("Connecting database to delete flight");
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		int count;
+		try {
+			connection  = MySQLDAOUtils.getConnection(true);
+			stmt = connection.prepareStatement(DELETE_BY_ID_QUERY);
+			stmt.setInt(1, id);
+			count = stmt.executeUpdate();
+			if (count != 1) {
+				return false;
+			}
+			return true;
+		} catch (SQLException e) {
+			LOGGER.warn("Error during findByLoginPass: " + e.getMessage());
+			throw new DatabaseException(e);
+		}
+		finally {
 			MySQLDAOUtils.close(stmt);
 			MySQLDAOUtils.close(connection);
 		}

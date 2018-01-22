@@ -5,6 +5,10 @@
 <title>Registration complete</title>
 </head>
 <body>
-	Your data have been added to the database, but the administrator has yet to approve your registration. After approval, you will be able to gain acces to the site.
+	<div>
+		Your data have been added to the database, but the administrator has
+		yet to approve your registration. After approval, you will be able to
+		gain acces to the site. <a href="login">Return</a>
+	</div>
 </body>
 </html>

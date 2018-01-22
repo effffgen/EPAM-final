@@ -26,7 +26,7 @@ public class MySQLFLightTeamDAO implements FlightTeamDAO {
 	
 	@Override
 	public Team getTeamByID(int id) throws DatabaseException {
-		LOGGER.trace("Getting team from database started");
+		LOGGER.debug("Getting team from database started");
 		Connection connection = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -41,8 +41,9 @@ public class MySQLFLightTeamDAO implements FlightTeamDAO {
 				team.setAeronavigator(DAOFactory.getDAOFactory().getUserDAO().getUserByID(rs.getInt(NAVIGATOR_FIELD)));
 				team.setFirstPilot(DAOFactory.getDAOFactory().getUserDAO().getUserByID(rs.getInt(FIRST_PILOT_FIELD)));
 				team.setSecondPilot(DAOFactory.getDAOFactory().getUserDAO().getUserByID(rs.getInt(SECOND_PILOT_FIELD)));
-				team.setAttendants(DAOFactory.getDAOFactory().getAttendantsDAO().getAttendantsOfTeam(rs.getInt(id)));
+			//	team.setAttendants(DAOFactory.getDAOFactory().getAttendantsDAO().getAttendantsOfTeam(rs.getInt(id)));
 			}
+			LOGGER.trace("Got team " + team);
 			return team;
 		} catch (SQLException e) {
 			LOGGER.error("Error during getTeamById: " + e.getMessage());

@@ -8,4 +8,6 @@ public interface FlightDAO {
 	List<Flight> getAllFlights() throws DatabaseException;
 
 	Flight getFlightByID(int id) throws DatabaseException;
+
+	boolean deleteFlightById(Integer id) throws DatabaseException;
 }
