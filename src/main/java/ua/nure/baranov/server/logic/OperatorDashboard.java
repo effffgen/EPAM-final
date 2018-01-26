@@ -21,11 +21,12 @@ public class OperatorDashboard extends HttpServlet {
 	private static final long serialVersionUID = -730317445247351018L;
 	private static final Logger LOGGER  = LogManager.getLogger();
 	
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LOGGER.trace("Getting all flights");
 		List<Flight> flights = null;
 		try {
-			flights = DAOFactory.getDAOFactory().getFlightDAO().getAllFlights();
+			flights = DAOFactory.getDAOFactory().getFlightDAO().getAll();
 		} catch (DatabaseException e) {
 			LOGGER.error("Error during getting flight list");
 		}

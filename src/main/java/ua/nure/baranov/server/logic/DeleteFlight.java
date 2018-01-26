@@ -21,7 +21,7 @@ import ua.nure.baranov.dao.factory.DAOFactory;
 public class DeleteFlight extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger();
-	
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.debug("Flight delete requested");
 		Integer id = Integer.valueOf(req.getParameter("id"));
@@ -31,7 +31,7 @@ public class DeleteFlight extends HttpServlet {
 		}
 		boolean result = false;
 		try {
-			result = DAOFactory.getDAOFactory().getFlightDAO().deleteFlightById(id);
+			result = DAOFactory.getDAOFactory().getFlightDAO().delete(id);
 		} catch (DatabaseException e) {
 			LOGGER.error("Flight deletion failed, try again later");
 			LOGGER.error(e.getMessage());

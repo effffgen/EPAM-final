@@ -17,7 +17,7 @@ public class EncodingFilter implements Filter {
 
 	private static final Logger LOGGER = LogManager.getLogger(EncodingFilter.class);
 
-	
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		String requestEncoding = request.getCharacterEncoding();
 		if (requestEncoding == null) {

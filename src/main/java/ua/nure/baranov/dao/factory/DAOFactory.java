@@ -5,6 +5,7 @@ import ua.nure.baranov.dao.CityDAO;
 import ua.nure.baranov.dao.FlightDAO;
 import ua.nure.baranov.dao.FlightTeamDAO;
 import ua.nure.baranov.dao.PlaneDAO;
+import ua.nure.baranov.dao.RequestDAO;
 import ua.nure.baranov.dao.UserDAO;
 import ua.nure.baranov.dao.mysql.MysqlDAOFactory;
 
@@ -49,4 +50,6 @@ public abstract class DAOFactory {
 	public abstract PlaneDAO getPlaneDAO();
 
 	public abstract AttendantsDAO getAttendantsDAO();
+
+	public abstract RequestDAO getRequestsDAO();
 }

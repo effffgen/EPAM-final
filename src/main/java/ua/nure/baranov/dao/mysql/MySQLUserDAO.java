@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,8 +32,14 @@ public class MySQLUserDAO implements UserDAO {
 	private static final String FIND_BY_ID_QUERY = "SELECT * FROM user WHERE user.id = ?";
 	private static final String IF_USERNAME_EXISTS_QUERY = "SELECT count(*) FROM user WHERE user.username = ?";
 	private static final String CREATE_USER_QUERY = "INSERT INTO user (id, username, password, first_name, last_name, role, email, creation_time) VALUES (DEFAULT, ?, ?, ?, ?, 'none', ? , DEFAULT)";
+	private static final String SET_PASSWORD_BY_ID_QUERY = "UPDATE user SET password = ? WHERE id = ?";
+	private static final String FIND_ALL_QUERY = "SELECT * FROM user";
+	private static final String DELETE_USER = "DELETE FROM user WHERE id = ?";
+	private static final String UPDATE_USER = "UPDATE user SET username=?, first_name=?, last_name=?, role=?, email=? WHERE id=?";
+	private static final String FIND_WITHOUT_ROLE_QUERY = "SELECT * FROM user WHERE role != ?";
+	private static final String FIND_BY_ROLE_QUERY = "SELECT * FROM user WHERE role = ?";
 
-	public static UserDAO getInstance() {
+	public static synchronized UserDAO getInstance() {
 		if (instance == null) {
 			instance = new MySQLUserDAO();
 		}
@@ -41,9 +48,8 @@ public class MySQLUserDAO implements UserDAO {
 
 	private MySQLUserDAO() {
 	}
-
 	@Override
-	public User createUser(User user) throws DatabaseException {
+	public User create(User user) throws DatabaseException {
 		LOGGER.trace("User creation started");
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -58,17 +64,18 @@ public class MySQLUserDAO implements UserDAO {
 			stmt.setString(4, user.getLastName());
 			stmt.setString(5, user.getEmail());
 			n = stmt.executeUpdate();
-			
-			if(n == 1) {
+
+			if (n == 1) {
 				rs = stmt.getGeneratedKeys();
 				user.setRole(Role.NONE);
-				if(rs.next()) {
-				user.setId(rs.getInt(1));}
+				if (rs.next()) {
+					user.setId(rs.getInt(1));
+				}
 				return user;
-			}
-			else return null;
+			} else
+				return null;
 		} catch (SQLException e) {
-			LOGGER.error("Error during createUser: " + e.getMessage());
+			LOGGER.error("Error during userCreate: " + e.getMessage());
 			throw new DatabaseException(e);
 		} finally {
 			MySQLDAOUtils.close(rs);
@@ -77,11 +84,6 @@ public class MySQLUserDAO implements UserDAO {
 		}
 	}
 
-	@Override
-	public List<User> findUsersByRole(Role role) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public User findByLoginPass(String login, String password) throws DatabaseException {
@@ -96,16 +98,7 @@ public class MySQLUserDAO implements UserDAO {
 			stmt.setString(2, password);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
-				User user = new User();
-				user.setId(rs.getInt(ID_FIELD));
-				user.setUsername(rs.getString(USERNAME_FIELD));
-				user.setPassword(rs.getString(PASSWORD_FIELD));
-				user.setFirstName(rs.getString(FIRSTNAME_FIELD));
-				user.setLastName(rs.getString(LASTNAME_FIELD));
-				user.setRole(Role.valueOf(rs.getString(ROLE_FIELD).toUpperCase()));
-				user.setEmail(rs.getString(EMAIL_FIELD));
-				user.setCreationTime(rs.getDate(CREATION_TIME_FIELD));
-				LOGGER.trace("Got user: " + user);
+				User user = assembleUser(rs);
 				return user;
 			} else {
 				LOGGER.trace("No appropriate users found");
@@ -122,9 +115,8 @@ public class MySQLUserDAO implements UserDAO {
 	}
 
 	@Override
-	public User getUserByID(int id) throws DatabaseException {
+	public User getById(Integer id, Connection connection) throws DatabaseException {
 		LOGGER.trace("Getting user from database by id started");
-		Connection connection = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
@@ -133,28 +125,18 @@ public class MySQLUserDAO implements UserDAO {
 			stmt.setInt(1, id);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
-				User user = new User();
-				user.setId(rs.getInt(ID_FIELD));
-				user.setUsername(rs.getString(USERNAME_FIELD));
-				user.setFirstName(rs.getString(FIRSTNAME_FIELD));
-				user.setLastName(rs.getString(LASTNAME_FIELD));
-				user.setPassword(rs.getString(PASSWORD_FIELD));
-				user.setRole(Role.valueOf(rs.getString(ROLE_FIELD).toUpperCase()));
-				user.setEmail(rs.getString(EMAIL_FIELD));
-				user.setCreationTime(rs.getDate(CREATION_TIME_FIELD));
-				LOGGER.trace("Got user: " + user);
+				User user = assembleUser(rs);
 				return user;
 			} else {
 				LOGGER.trace("No appropriate users found");
 				return null;
 			}
 		} catch (SQLException e) {
-			LOGGER.error("Error during findById: " + e.getMessage());
+			LOGGER.error("Error during User.getById: " + e.getMessage());
 			throw new DatabaseException(e);
 		} finally {
 			MySQLDAOUtils.close(rs);
 			MySQLDAOUtils.close(stmt);
-			MySQLDAOUtils.close(connection);
 		}
 	}
 
@@ -182,8 +164,165 @@ public class MySQLUserDAO implements UserDAO {
 			MySQLDAOUtils.close(rs);
 			MySQLDAOUtils.close(stmt);
 			MySQLDAOUtils.close(connection);
+		}
+	}
+
+	@Override
+	public boolean setPasswordById(Integer id, String password) throws DatabaseException {
+		LOGGER.debug("Updating user's password");
+		LOGGER.trace("id --> " + id);
+		LOGGER.trace("New password --> " + password);
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		int n;
+		try {
+			connection = MySQLDAOUtils.getConnection(true);
+			stmt = connection.prepareStatement(SET_PASSWORD_BY_ID_QUERY);
+			stmt.setString(1, password);
+			stmt.setInt(2, id);
+			n = stmt.executeUpdate();
+			if (n != 1) {
+				LOGGER.warn("Something went wrong during the password changing");
+				return false;
+			}
+			LOGGER.trace("Password was successfully updated");
+			return true;
+		} catch (SQLException e) {
+			LOGGER.error("Error during setPasswordById: " + e.getMessage());
+			throw new DatabaseException(e);
+		} finally {
+			MySQLDAOUtils.close(stmt);
+			MySQLDAOUtils.close(connection);
 
 		}
 	}
 
+	@Override
+	public boolean update(User user) throws DatabaseException {
+		LOGGER.debug("Updating user");
+		LOGGER.trace("id --> " + user.getId());
+		LOGGER.trace("New user data --> "+user);
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		int n;
+		try {
+			connection = MySQLDAOUtils.getConnection(true);
+			stmt = connection.prepareStatement(UPDATE_USER);
+			stmt.setString(1, user.getUsername());
+			stmt.setString(2, user.getFirstName());
+			stmt.setString(3, user.getLastName());
+			stmt.setString(4, user.getRole().toString().toLowerCase());
+			stmt.setString(5, user.getEmail());
+			stmt.setInt(6, user.getId());
+			n = stmt.executeUpdate();
+			if (n != 1) {
+				LOGGER.warn("Something went wrong during the user updating");
+				return false;
+			}
+			LOGGER.trace("User data has been successfully updated");
+			return true;
+		} catch (SQLException e) {
+			LOGGER.error("Error during User.update: " + e.getMessage());
+			throw new DatabaseException(e);
+		} finally {
+			MySQLDAOUtils.close(stmt);
+			MySQLDAOUtils.close(connection);
+
+		}
+	}
+
+	@Override
+	public boolean delete(Integer id) throws DatabaseException {
+		LOGGER.debug("Deleting user");
+		LOGGER.trace("id --> " + id);
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		int n;
+		try {
+			connection = MySQLDAOUtils.getConnection(true);
+			stmt = connection.prepareStatement(DELETE_USER);
+			stmt.setInt(1, id);
+			n = stmt.executeUpdate();
+			if (n != 1) {
+				LOGGER.warn("Something went wrong during user deletion");
+				return false;
+			}
+			LOGGER.trace("User has been successfully deleted");
+			return true;
+		} catch (SQLException e) {
+			LOGGER.error("Error during User.delete: " + e.getMessage());
+			throw new DatabaseException(e);
+		} finally {
+			MySQLDAOUtils.close(stmt);
+			MySQLDAOUtils.close(connection);
+
+		}
+	}
+
+	@Override
+	public List<User> getAll() throws DatabaseException {
+		LOGGER.trace("Getting all users from database started");
+		Connection connection = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<User> users = new ArrayList<>();
+		try {
+			connection = MySQLDAOUtils.getConnection(true);
+			stmt = connection.createStatement();
+			rs = stmt.executeQuery(FIND_ALL_QUERY);
+			while (rs.next()) {
+				User user = assembleUser(rs);
+				users.add(user);
+			}
+			return users;
+		} catch (SQLException e) {
+			LOGGER.error("Error during User.getAll: " + e.getMessage());
+			throw new DatabaseException(e);
+		} finally {
+			MySQLDAOUtils.close(rs);
+			MySQLDAOUtils.close(stmt);
+			MySQLDAOUtils.close(connection);
+		}
+	}
+
+	private User assembleUser(ResultSet rs) throws SQLException {
+		User user = new User();
+		user.setId(rs.getInt(ID_FIELD));
+		user.setUsername(rs.getString(USERNAME_FIELD));
+		user.setFirstName(rs.getString(FIRSTNAME_FIELD));
+		user.setLastName(rs.getString(LASTNAME_FIELD));
+		user.setPassword(rs.getString(PASSWORD_FIELD));
+		user.setRole(Role.valueOf(rs.getString(ROLE_FIELD).toUpperCase()));
+		user.setEmail(rs.getString(EMAIL_FIELD));
+		user.setCreationTime(rs.getDate(CREATION_TIME_FIELD));
+		LOGGER.trace("Got user: " + user);
+		return user;
+	}
+
+	@Override
+	public List<User> getByRole(Role role, boolean withoutRole) throws DatabaseException {
+		LOGGER.trace("Getting users by the roles started");
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<User> users = new ArrayList<>();
+		try {
+			connection = MySQLDAOUtils.getConnection(true);
+			stmt = connection.prepareStatement((withoutRole)?FIND_WITHOUT_ROLE_QUERY:FIND_BY_ROLE_QUERY);
+			stmt.setString(1, role.toString().toLowerCase());
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				User user = assembleUser(rs);
+				users.add(user);
+			}
+			return users;
+		} catch (SQLException e) {
+			LOGGER.error("Error during findByLoginPass: " + e.getMessage());
+			throw new DatabaseException(e);
+		} finally {
+			MySQLDAOUtils.close(rs);
+			MySQLDAOUtils.close(stmt);
+			MySQLDAOUtils.close(connection);
+		}
+	}
 }

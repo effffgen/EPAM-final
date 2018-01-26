@@ -10,3 +10,16 @@ table.info th{
 table.info th,tr,td{
 	border: 1px solid black;
 }*/
+
+.table-truncate {
+   position: relative;
+   width: 40%;
+}
+
+.table-truncate__body {
+  position: absolute;
+  max-width: 95%;
+  white-space: nowrap;
+  overflow: hidden;         
+  text-overflow: ellipsis;
+}

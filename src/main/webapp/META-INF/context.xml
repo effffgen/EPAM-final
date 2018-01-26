@@ -3,10 +3,15 @@
   <Resource name="jdbc/mysql"
   			auth="Container" 
   			type="javax.sql.DataSource"
-			maxTotal="100" maxIdle="30" maxWait="10000"
+			maxTotal="100" maxIdle="20" maxWaitMillis="5000"
 			username="user" password="password" 
-			driverClassName="com.mysql.cj.jdbc.Driver"
-			defaultAutoCommit="false"
+			driverClassName="com.mysql.jdbc.Driver"
+			logAbandoned="true"
 			defaultTransactionIsolation="READ_COMMITTED"
-			url="jdbc:mysql://localhost:3306/airlines?useSSL=false"/>
+			url="jdbc:mysql://localhost:3306/airlines?useSSL=false"
+			removeAbandonedOnBorrow ="true"
+			removeAbandonedOnMaintenance="true"
+			removeAbandonedTimeout="10"
+			/>
+			
 </Context>

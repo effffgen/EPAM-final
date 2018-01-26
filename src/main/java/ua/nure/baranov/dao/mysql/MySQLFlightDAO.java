@@ -32,7 +32,7 @@ public class MySQLFlightDAO implements FlightDAO{
 	
 	
 	
-	public static FlightDAO getInstance() {
+	public static synchronized FlightDAO getInstance() {
 		if(instance == null) {
 			instance = new MySQLFlightDAO();
 		}
@@ -42,7 +42,7 @@ public class MySQLFlightDAO implements FlightDAO{
 	private MySQLFlightDAO() {}
 
 	@Override
-	public List<Flight> getAllFlights() throws DatabaseException {
+	public List<Flight> getAll() throws DatabaseException {
 		LOGGER.trace("Getting all flights from database started");
 		Connection connection = null;
 		Statement stmt = null;
@@ -58,7 +58,7 @@ public class MySQLFlightDAO implements FlightDAO{
 				flight.setFlightDate(rs.getDate(FLIGHT_DATE_FIELD));
 				flight.setDepart(DAOFactory.getDAOFactory().getCityDAO().getCityByID(rs.getInt(DEPART_ID_FIELD)));
 				flight.setDestination(DAOFactory.getDAOFactory().getCityDAO().getCityByID(rs.getInt(DEST_ID_FIELD)));
-				flight.setFlightTeam(DAOFactory.getDAOFactory().getFlightTeamDAO().getTeamByID(rs.getInt(TEAM_ID_FIELD)));
+				flight.setFlightTeam(DAOFactory.getDAOFactory().getFlightTeamDAO().getById(rs.getInt(TEAM_ID_FIELD)));
 				flight.setPlane(DAOFactory.getDAOFactory().getPlaneDAO().getPlaneByID(rs.getInt(PLANE_ID_FIELD)));
 				flights.add(flight);
 			}
@@ -75,7 +75,7 @@ public class MySQLFlightDAO implements FlightDAO{
 	}
 
 	@Override
-	public Flight getFlightByID(int id) throws DatabaseException {
+	public Flight getById(Integer id, Connection con) throws DatabaseException {
 		LOGGER.trace("Getting single flight from database started");
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -109,22 +109,29 @@ public class MySQLFlightDAO implements FlightDAO{
 	}
 
 	@Override
-	public boolean deleteFlightById(Integer id) throws DatabaseException {
+	public boolean delete(Integer id) throws DatabaseException {
 		LOGGER.trace("Connecting database to delete flight");
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		int count;
 		try {
-			connection  = MySQLDAOUtils.getConnection(true);
+			connection  = MySQLDAOUtils.getConnection(false);
+			DAOFactory.getDAOFactory().getRequestsDAO().deleteByFlightId(id, connection);
 			stmt = connection.prepareStatement(DELETE_BY_ID_QUERY);
 			stmt.setInt(1, id);
 			count = stmt.executeUpdate();
 			if (count != 1) {
 				return false;
 			}
+			connection.commit();
 			return true;
 		} catch (SQLException e) {
 			LOGGER.warn("Error during findByLoginPass: " + e.getMessage());
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				LOGGER.error("Cannot rollback transaction, please check the database state");
+			}
 			throw new DatabaseException(e);
 		}
 		finally {
@@ -132,5 +139,18 @@ public class MySQLFlightDAO implements FlightDAO{
 			MySQLDAOUtils.close(connection);
 		}
 	}
+
+	@Override
+	public Flight create(Flight t) throws DatabaseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean update(Flight t) throws DatabaseException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 }

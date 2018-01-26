@@ -1,7 +1,7 @@
 package ua.nure.baranov.entity;
 import java.util.Date;
 
-public class User extends Entity implements Loginable{
+public class User extends Entity{
 	public User() {
 		
 	}

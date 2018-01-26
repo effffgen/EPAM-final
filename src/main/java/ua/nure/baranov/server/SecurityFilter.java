@@ -1,8 +1,7 @@
 package ua.nure.baranov.server;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Enumeration;
+
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -40,11 +39,11 @@ public class SecurityFilter implements Filter {
 	public SecurityFilter() {
       
     }
-
+	@Override
 	public void destroy() {
 		LOGGER.info("Security filter destroyed");
 	}
-
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 	/*	HttpServletRequest req = (HttpServletRequest) request;
 		HttpSession session = req.getSession();

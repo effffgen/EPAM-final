@@ -1,12 +1,4 @@
-<script>
-	function setData(id) {
-		var hidden = document.getElementById('deleteid');
-		hidden.value=id;
-	}
-</script>
-
-
-<div class="modal fade" id="delete" tabindex="-1" role="dialog"
+<div class="modal fade" id="deleteFlight" tabindex="-1" role="dialog"
 	aria-labelledby="deleteModal" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">

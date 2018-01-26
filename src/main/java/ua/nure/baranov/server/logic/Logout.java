@@ -15,7 +15,8 @@ import org.apache.logging.log4j.Logger;
 public class Logout extends HttpServlet {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final long serialVersionUID = 1L;
-
+	
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LOGGER.debug("Logout requested");
 		HttpSession sesion = request.getSession();

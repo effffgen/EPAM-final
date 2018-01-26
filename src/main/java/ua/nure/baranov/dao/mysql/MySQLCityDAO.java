@@ -52,7 +52,7 @@ public class MySQLCityDAO implements CityDAO {
 	}
 
 	
-	public static CityDAO getInstance() {
+	public static synchronized CityDAO getInstance() {
 		if(instance == null) {
 			instance  = new MySQLCityDAO();
 		}

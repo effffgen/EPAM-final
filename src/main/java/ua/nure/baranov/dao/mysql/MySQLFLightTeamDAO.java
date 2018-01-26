@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,12 +23,45 @@ public class MySQLFLightTeamDAO implements FlightTeamDAO {
 	private static final int FIRST_PILOT_FIELD = 2;
 	private static final int SECOND_PILOT_FIELD = 3;
 	
+
+	private static FlightTeamDAO instance = null;
 	
-	
+	public static synchronized FlightTeamDAO getInstance() {
+		if (instance == null) {
+			instance = new MySQLFLightTeamDAO();
+		}
+		return instance;
+	}
+
+	private MySQLFLightTeamDAO() {}
+
 	@Override
-	public Team getTeamByID(int id) throws DatabaseException {
+	public Team create(Team t) throws DatabaseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Team> getAll() throws DatabaseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean update(Team t) throws DatabaseException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean delete(Integer id) throws DatabaseException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Team getById(Integer id, Connection connection) throws DatabaseException {
 		LOGGER.debug("Getting team from database started");
-		Connection connection = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		try {
@@ -38,9 +72,9 @@ public class MySQLFLightTeamDAO implements FlightTeamDAO {
 			if(rs.next()) {
 				team = new Team();
 				team.setId(rs.getInt(ID_FIELD));
-				team.setAeronavigator(DAOFactory.getDAOFactory().getUserDAO().getUserByID(rs.getInt(NAVIGATOR_FIELD)));
-				team.setFirstPilot(DAOFactory.getDAOFactory().getUserDAO().getUserByID(rs.getInt(FIRST_PILOT_FIELD)));
-				team.setSecondPilot(DAOFactory.getDAOFactory().getUserDAO().getUserByID(rs.getInt(SECOND_PILOT_FIELD)));
+				team.setAeronavigator(DAOFactory.getDAOFactory().getUserDAO().getById(rs.getInt(NAVIGATOR_FIELD), connection));
+				team.setFirstPilot(DAOFactory.getDAOFactory().getUserDAO().getById(rs.getInt(FIRST_PILOT_FIELD), connection));
+				team.setSecondPilot(DAOFactory.getDAOFactory().getUserDAO().getById(rs.getInt(SECOND_PILOT_FIELD), connection));
 			//	team.setAttendants(DAOFactory.getDAOFactory().getAttendantsDAO().getAttendantsOfTeam(rs.getInt(id)));
 			}
 			LOGGER.trace("Got team " + team);
@@ -52,21 +86,10 @@ public class MySQLFLightTeamDAO implements FlightTeamDAO {
 		finally {
 			MySQLDAOUtils.close(rs);
 			MySQLDAOUtils.close(stmt);
-			MySQLDAOUtils.close(connection);
 		}
 	}
-	
 
-	private static FlightTeamDAO instance = null;
-	
-	public static FlightTeamDAO getInstance() {
-		if (instance == null) {
-			instance = new MySQLFLightTeamDAO();
-		}
-		return instance;
-	}
 
-	private MySQLFLightTeamDAO() {}
 	
 	
 }

@@ -15,8 +15,8 @@ import org.apache.logging.log4j.Logger;
 
 import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.factory.DAOFactory;
-import ua.nure.baranov.dao.mysql.MySQLDAOUtils;
 import ua.nure.baranov.entity.User;
+import ua.nure.baranov.server.Util;
 @WebServlet("/login")
 public class Login extends HttpServlet{
 	private static final long serialVersionUID = 8097235372201198098L;
@@ -27,7 +27,7 @@ public class Login extends HttpServlet{
 		LOGGER.debug("Login procedure started");
 		String login = req.getParameter("login");
 		String password = req.getParameter("password");
-		String saltedPassword = MySQLDAOUtils.saltedPassword(password);
+		String saltedPassword = Util.saltedPassword(password);
 		LOGGER.trace("Salted password is --> "+saltedPassword);
 		if(saltedPassword == null) {
 			resp.sendRedirect("login.jsp");

@@ -1,20 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<!DOCTYPE html>
-<html>
-<head>
-<%@ include file="jspf/header.jspf"%>
-<title>Flight #${requestScope.flight.id}</title>
-</head>
-<body>
+
 	<c:set var="plane" value="${requestScope.flight.plane}" />
 	<c:set var="team" value="${requestScope.flight.flightTeam }" />
 	<jsp:useBean id="team" class="ua.nure.baranov.entity.Team" />
 	<jsp:useBean id="plane" class="ua.nure.baranov.entity.Plane" />
-
-	<%@ include file="jspf/nav.jspf"%>
-
+<div class="modal-header"><h5>Flight # ${requestScope.flight.id}</h5></div>
+<div class="modal-body">
 	<table>
 		<tr>
 			<td>id</td>
@@ -63,14 +56,12 @@
 		</tr>
 
 	</table>
-
+</div>
+<div class="modal-footer">
 	<c:if test="${(user.role == 'ADMINISTRATOR' || user.role == 'OPERATOR')}">
-		<button type="button" class="btn btn-secondary" data-toggle="modal"	data-target="#delete" onclick="setData(${requestScope.flight.id})">Delete this flight</button>
+		<button type="button" class="btn btn-secondary" data-toggle="modal"	data-target="#deleteFlight" onclick="setData('deleteFlight', ${requestScope.flight.id})">Delete this flight</button>
 		<a href="getFlight?id=${requestScope.flight.id}" class="btn btn-secondary" data-toggle="modal" data-target="#modify">Modify this flight</a>
-	<%@ include file="jspf/deleteflightmodal.jspf" %>
-	<%@ include file="jspf/modifyflightmodal.jspf" %>
+	<%@ include file="jspf/flight/deletemodal.jspf" %>
+	<%@ include file="jspf/flight/modifymodal.jspf" %>
 	</c:if>
-	
-	
-</body>
-</html>
+</div>
