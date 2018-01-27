@@ -6,13 +6,21 @@
 	<c:set var="team" value="${requestScope.flight.flightTeam }" />
 	<jsp:useBean id="team" class="ua.nure.baranov.entity.Team" />
 	<jsp:useBean id="plane" class="ua.nure.baranov.entity.Plane" />
-<div class="modal-header"><h5>Flight # ${requestScope.flight.id}</h5></div>
+<div class="modal-header"><h5>Flight # ${requestScope.flight.id}</h5>
+	<button type="button" class="close" data-dismiss="modal"
+		aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
 <div class="modal-body">
 	<table>
 		<tr>
 			<td>id</td>
 			<td>${requestScope.flight.id}</td>
 		</tr>
+		<tr>
+		<td>Name</td>
+		<td>${requestScope.flight.name }
 		<tr>
 			<td>From:</td>
 			<td>${requestScope.flight.depart.name}</td>
@@ -58,10 +66,10 @@
 	</table>
 </div>
 <div class="modal-footer">
-	<c:if test="${(user.role == 'ADMINISTRATOR' || user.role == 'OPERATOR')}">
+	<c:if test="${(user.role == 'ADMINISTRATOR')}">
 		<button type="button" class="btn btn-secondary" data-toggle="modal"	data-target="#deleteFlight" onclick="setData('deleteFlight', ${requestScope.flight.id})">Delete this flight</button>
 		<a href="getFlight?id=${requestScope.flight.id}" class="btn btn-secondary" data-toggle="modal" data-target="#modify">Modify this flight</a>
-	<%@ include file="jspf/flight/deletemodal.jspf" %>
-	<%@ include file="jspf/flight/modifymodal.jspf" %>
+	<%@ include file="../jspf/flight/delete.jspf" %>
+	<%@ include file="../jspf/flight/modify.jspf" %>
 	</c:if>
 </div>

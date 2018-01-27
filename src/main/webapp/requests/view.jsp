@@ -41,6 +41,7 @@
 								<th>ID</th>
 								<th>Operator</th>
 								<th>Text</th>
+								<th>Associated with flight</th>
 								<c:if test="${(sessionScope.user.role == 'ADMINISTRATOR' && (requestScope.action == 'all' || requestScope.action == 'new')) }">
 									<th>Actions</th>
 								</c:if>
@@ -52,6 +53,8 @@
 								<td><a href="requests/get?id=${req.id }"
 									data-toggle="modal" data-target="#utilModal">${req.operator.fullName}</a></td>
 								<td class="table-truncate"><div class="table-truncate__body">${req.text }</div></td>
+							<td><a href="flight?id=${req.flight.id }"># ${req.flight.id }, ${req.flight.depart.name } - ${req.flight.destination.name }</a></td>
+				
 								<c:if test="${(req.status == 'ON_APPROVAL' && sessionScope.user.role == 'ADMINISTRATOR') }">
 									<td>
 										<form action="requests" method="post">

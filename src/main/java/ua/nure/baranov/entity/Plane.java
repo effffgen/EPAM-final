@@ -1,5 +1,6 @@
 package ua.nure.baranov.entity;
 
+@SuppressWarnings("serial")
 public class Plane extends Entity{
 	public Plane(Integer id) {
 		super(id);

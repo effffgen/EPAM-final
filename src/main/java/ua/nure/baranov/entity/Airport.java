@@ -1,5 +1,6 @@
 package ua.nure.baranov.entity;
 
+@SuppressWarnings("serial")
 public class Airport extends Entity {
 
 	public Airport(Integer id) {

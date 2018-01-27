@@ -1,5 +1,6 @@
 package ua.nure.baranov.entity;
 
+@SuppressWarnings("serial")
 public class City extends Entity{
 
 	public City(Integer id) {
@@ -10,7 +11,6 @@ public class City extends Entity{
 	}
 
 	private String name;
-//	private Country country;
 
 	
 	
@@ -20,13 +20,7 @@ public class City extends Entity{
 	public void setName(String name) {
 		this.name = name;
 	}
-	/*public Country getCountry() {
-		return country;
-	}
-	public void setCountry(Country country) {
-		this.country = country;
-	}*/
-	
+
 	@Override
 	public String toString() {
 		return name;

@@ -2,6 +2,7 @@ package ua.nure.baranov.dao;
 
 import java.sql.Connection;
 
+import ua.nure.baranov.dao.support.DatabaseException;
 import ua.nure.baranov.entity.Team;
 
 public interface FlightTeamDAO extends GenericDAO<Team>{

@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.factory.DAOFactory;
+import ua.nure.baranov.dao.support.DatabaseException;
 import ua.nure.baranov.entity.Request;
 
 /**

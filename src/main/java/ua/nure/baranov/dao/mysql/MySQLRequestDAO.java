@@ -10,9 +10,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.RequestDAO;
 import ua.nure.baranov.dao.factory.DAOFactory;
+import ua.nure.baranov.dao.support.DatabaseException;
 import ua.nure.baranov.entity.Request;
 import ua.nure.baranov.entity.RequestStatus;
 
@@ -29,6 +29,7 @@ public class MySQLRequestDAO implements RequestDAO {
 	private static final String UPDATE_STATUS_BY_ID = "UPDATE request SET status = ? WHERE id = ?";
 	private static final String FIND_REQUEST_BY_ID_QUERY = "SELECT * FROM request WHERE id = ?";
 	private static final String DELETE_REQUESTS_BY_FLIGHT_ID = "DELETE FROM request WHERE flight_id=?";
+	private static final String DELETE_REQUESTS_BY_OPERATOR_ID = "DELETE FROM request WHERE operator_id=?";
 	private static RequestDAO instance = null;
 
 	@Override
@@ -134,30 +135,6 @@ public class MySQLRequestDAO implements RequestDAO {
 	}
 
 	@Override
-	public Request create(Request t) throws DatabaseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Request> getAll() throws DatabaseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean delete(Integer id) throws DatabaseException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean update(Request request) throws DatabaseException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean deleteByFlightId(Integer id, Connection connection) throws DatabaseException {
 		LOGGER.debug("Deleting requests associated with flight under deletion");
 		LOGGER.trace("Flight id --> " + id);
@@ -174,5 +151,23 @@ public class MySQLRequestDAO implements RequestDAO {
 			MySQLDAOUtils.close(stmt);
 		}
 	}
+
+	@Override
+	public void deleteByOperatorId(Integer id, Connection connection) throws DatabaseException {
+		LOGGER.debug("Deleting requests associated with user under deletion");
+		LOGGER.trace("Flight id --> " + id);
+		PreparedStatement stmt = null;
+		try {
+			stmt = connection.prepareStatement(DELETE_REQUESTS_BY_OPERATOR_ID);
+			stmt.setInt(1, id);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			LOGGER.error("Error during Request.deleteByOperatorId: " + e.getMessage());
+			throw new DatabaseException(e);
+		} finally {
+			MySQLDAOUtils.close(stmt);
+		}		
+	}
+
 
 }

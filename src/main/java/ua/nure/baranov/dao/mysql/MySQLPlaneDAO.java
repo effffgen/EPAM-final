@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.PlaneDAO;
+import ua.nure.baranov.dao.support.DatabaseException;
 import ua.nure.baranov.entity.Plane;
 
 public class MySQLPlaneDAO implements PlaneDAO {

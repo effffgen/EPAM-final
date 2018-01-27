@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.nure.baranov.dao.DatabaseException;
+import ua.nure.baranov.dao.support.DatabaseException;
 
 public class MySQLDAOUtils {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -15,8 +15,6 @@ public class MySQLDAOUtils {
 	
 	public static void close(AutoCloseable autoClosable) throws DatabaseException {
 		try {
-			LOGGER.trace("Trying to close resource");
-			LOGGER.trace("Resource --> " + autoClosable);
 			if(autoClosable!=null) {
 				autoClosable.close();
 			}

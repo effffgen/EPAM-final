@@ -25,7 +25,6 @@
 					pattern="dd/MM/yyyy" /></td>
 		</tr>
 
-
 		<tr>
 			<td>Current request status:</td>
 			<td>${requestScope.req.status }</td>

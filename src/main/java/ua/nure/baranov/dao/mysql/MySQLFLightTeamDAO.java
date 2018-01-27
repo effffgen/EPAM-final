@@ -4,14 +4,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.FlightTeamDAO;
 import ua.nure.baranov.dao.factory.DAOFactory;
+import ua.nure.baranov.dao.support.DatabaseException;
 import ua.nure.baranov.entity.Team;
 
 public class MySQLFLightTeamDAO implements FlightTeamDAO {
@@ -34,30 +33,6 @@ public class MySQLFLightTeamDAO implements FlightTeamDAO {
 	}
 
 	private MySQLFLightTeamDAO() {}
-
-	@Override
-	public Team create(Team t) throws DatabaseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Team> getAll() throws DatabaseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean update(Team t) throws DatabaseException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean delete(Integer id) throws DatabaseException {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public Team getById(Integer id, Connection connection) throws DatabaseException {

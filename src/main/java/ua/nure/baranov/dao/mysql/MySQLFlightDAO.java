@@ -11,9 +11,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.FlightDAO;
 import ua.nure.baranov.dao.factory.DAOFactory;
+import ua.nure.baranov.dao.support.DatabaseException;
+import ua.nure.baranov.dao.support.ResultSetProcessor;
 import ua.nure.baranov.entity.Flight;
 
 public class MySQLFlightDAO implements FlightDAO{
@@ -27,6 +28,8 @@ public class MySQLFlightDAO implements FlightDAO{
 	private static final int FLIGHT_DATE_FIELD = 4;
 	private static final int PLANE_ID_FIELD = 5;
 	private static final int TEAM_ID_FIELD = 6;
+	private static final int FLIGHT_NAME_FIELD = 7;
+	
 	private static final String FIND_BY_ID_QUERY = "SELECT * FROM flight WHERE id = ?";
 	private static final String DELETE_BY_ID_QUERY = "DELETE FROM flight WHERE id = ?";
 	
@@ -53,13 +56,7 @@ public class MySQLFlightDAO implements FlightDAO{
 			rs = stmt.executeQuery(FIND_FLIGHTS_QUERY);
 			List<Flight> flights = new ArrayList<Flight>();
 			while(rs.next()) {
-				Flight flight = new Flight();
-				flight.setId(Integer.valueOf(rs.getInt(ID_FIELD)));
-				flight.setFlightDate(rs.getDate(FLIGHT_DATE_FIELD));
-				flight.setDepart(DAOFactory.getDAOFactory().getCityDAO().getCityByID(rs.getInt(DEPART_ID_FIELD)));
-				flight.setDestination(DAOFactory.getDAOFactory().getCityDAO().getCityByID(rs.getInt(DEST_ID_FIELD)));
-				flight.setFlightTeam(DAOFactory.getDAOFactory().getFlightTeamDAO().getById(rs.getInt(TEAM_ID_FIELD)));
-				flight.setPlane(DAOFactory.getDAOFactory().getPlaneDAO().getPlaneByID(rs.getInt(PLANE_ID_FIELD)));
+				Flight flight = assembleFlight.process(rs);
 				flights.add(flight);
 			}
 			return flights;
@@ -87,15 +84,8 @@ public class MySQLFlightDAO implements FlightDAO{
 			rs = stmt.executeQuery();
 			Flight flight = null;
 			if(rs.next()) {
-				flight = new Flight();
-				flight.setId(Integer.valueOf(rs.getInt(ID_FIELD)));
-				flight.setFlightDate(rs.getDate(FLIGHT_DATE_FIELD));
-				flight.setDepart(DAOFactory.getDAOFactory().getCityDAO().getCityByID(rs.getInt(DEPART_ID_FIELD)));
-				flight.setDestination(DAOFactory.getDAOFactory().getCityDAO().getCityByID(rs.getInt(DEST_ID_FIELD)));
-				//flight.setFlightTeam(DAOFactory.getDAOFactory().getFlightTeamDAO().getTeamByID(rs.getInt(TEAM_ID_FIELD)));
-				flight.setPlane(DAOFactory.getDAOFactory().getPlaneDAO().getPlaneByID(rs.getInt(PLANE_ID_FIELD)));
+				flight = assembleFlight.process(rs);
 			}
-			
 			return flight;
 		} catch (SQLException e) {
 			LOGGER.warn("Error during findByLoginPass: " + e.getMessage());
@@ -140,17 +130,17 @@ public class MySQLFlightDAO implements FlightDAO{
 		}
 	}
 
-	@Override
-	public Flight create(Flight t) throws DatabaseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean update(Flight t) throws DatabaseException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
+	private static final ResultSetProcessor<Flight> assembleFlight = (ResultSet rs) ->{
+		Flight flight = new Flight();
+		flight.setId(Integer.valueOf(rs.getInt(ID_FIELD)));
+		flight.setFlightDate(rs.getDate(FLIGHT_DATE_FIELD));
+		flight.setDepart(DAOFactory.getDAOFactory().getCityDAO().getById(rs.getInt(DEPART_ID_FIELD)));
+		flight.setDestination(DAOFactory.getDAOFactory().getCityDAO().getById(rs.getInt(DEST_ID_FIELD)));
+		flight.setFlightTeam(DAOFactory.getDAOFactory().getFlightTeamDAO().getById(rs.getInt(TEAM_ID_FIELD)));
+		flight.setPlane(DAOFactory.getDAOFactory().getPlaneDAO().getPlaneByID(rs.getInt(PLANE_ID_FIELD)));
+		flight.setName(rs.getString(FLIGHT_NAME_FIELD));
+		return flight;
+	};
 	
 }

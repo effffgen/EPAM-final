@@ -2,6 +2,7 @@ package ua.nure.baranov.entity;
 
 import java.util.Date;
 
+@SuppressWarnings("serial")
 public class Flight extends Entity{
 	
 	public Flight(Integer id) {
@@ -10,6 +11,7 @@ public class Flight extends Entity{
 	public Flight() {
 		super(null);
 	}
+	private String name;
 	private City destination;
 	private City depart;
 	private Date flightDate;
@@ -17,6 +19,13 @@ public class Flight extends Entity{
 	private Team flightTeam;
 
 
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public City getDestination() {
 		return destination;
 	}

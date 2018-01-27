@@ -2,6 +2,7 @@ package ua.nure.baranov.entity;
 
 import java.util.Date;
 
+@SuppressWarnings("serial")
 public class Request extends Entity {
 
 	private User operator;

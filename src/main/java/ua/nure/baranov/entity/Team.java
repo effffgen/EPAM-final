@@ -2,6 +2,7 @@ package ua.nure.baranov.entity;
 
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class Team extends Entity {
 
 	public Team(Integer id) {

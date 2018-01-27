@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @WebServlet("/logout")
-public class Logout extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final long serialVersionUID = 1L;
 	

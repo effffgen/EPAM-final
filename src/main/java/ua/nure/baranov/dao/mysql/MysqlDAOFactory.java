@@ -13,13 +13,13 @@ import org.apache.logging.log4j.Logger;
 
 import ua.nure.baranov.dao.AttendantsDAO;
 import ua.nure.baranov.dao.CityDAO;
-import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.FlightDAO;
 import ua.nure.baranov.dao.FlightTeamDAO;
 import ua.nure.baranov.dao.PlaneDAO;
 import ua.nure.baranov.dao.RequestDAO;
 import ua.nure.baranov.dao.UserDAO;
 import ua.nure.baranov.dao.factory.DAOFactory;
+import ua.nure.baranov.dao.support.DatabaseException;
 
 public class MysqlDAOFactory extends DAOFactory {
 	private static final Logger LOGGER = LogManager.getLogger();

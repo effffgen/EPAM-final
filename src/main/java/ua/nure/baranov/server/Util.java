@@ -10,9 +10,9 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.factory.DAOFactory;
 import ua.nure.baranov.dao.mysql.MySQLDAOUtils;
+import ua.nure.baranov.dao.support.DatabaseException;
 import ua.nure.baranov.entity.Flight;
 
 public class Util {

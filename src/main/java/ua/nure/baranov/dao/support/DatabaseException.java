@@ -1,4 +1,4 @@
-package ua.nure.baranov.dao;
+package ua.nure.baranov.dao.support;
 
 public class DatabaseException extends Exception {
 

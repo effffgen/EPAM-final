@@ -11,14 +11,19 @@
 	<%@ include file="../jspf/nav.jspf"%>
 	<div class="tabs col-lg-12 col-md-12 col-sm-12 col-xs-12">
 		<ul class="nav md-pills nav-justified pills-secondary">
-			<li class="nav-item"><a href="users?act=new"
-				class="nav-link ${requestScope.action eq 'unreg' ? 'active' : '' }">Unregistered</a></li>
-			<li class="nav-item"><a href="users?act=registered"
-				class="nav-link ${requestScope.action eq 'reg' ? 'active' : '' }">Registered</a></li>
-			<li class="nav-item"><a href="users?act=all"
-				class="nav-link ${requestScope.action eq 'all' ? 'active' : '' }">All</a></li>
+			<li class="nav-item"><a href="users?act=get&criteria=new"
+				class="nav-link ${requestScope.criteria eq 'new' ? 'active' : '' }">Unregistered</a></li>
+			<li class="nav-item"><a href="users?act=get&criteria=registered"
+				class="nav-link ${requestScope.criteria eq 'registered' ? 'active' : '' }">Registered</a></li>
+			<li class="nav-item"><a href="users?act=get&criteria=all"
+				class="nav-link ${requestScope.criteria eq 'all' ? 'active' : '' }">All</a></li>
 		</ul>
-		<div class="container tab-content col-lg-6 col-md-6 col-sm-6 col-xs-6">
+		<div class="container tab-content col-lg-8 col-md-8 col-sm-8 col-xs-8">
+			
+	<div style="margin:auto">
+	<a href="users?act=create" class="btn btn-secondary" data-toggle="modal" data-target="#utilModal">Create new user</a>
+	</div>
+			
 			<c:choose>
 				<c:when test="${empty requestScope.users }">
 					<div class="row">
@@ -52,23 +57,21 @@
 								<td>${user.username }</td>
 								<td><fmt:formatDate value="${user.creationTime }" pattern="dd/MM/yyyy"/></td>
 								<td>${user.role }</td>
-								<td></td>
+								<td class="text-nowrap"><button type="button" class="btn btn-secondary btn-sm"
+										data-toggle="modal" data-target="#delete"
+										onclick="setData('deleteid',${user.id})">Delete</button> 
+									<a href="users?act=modify&id=${user.id }"
+									class="btn btn-secondary btn-sm" data-toggle="modal"
+									data-target="#utilModal">Modify</a></td>
 							</tr>
 						</c:forEach>
-
 					</table>
-
 				</c:otherwise>
 			</c:choose>
 		</div>
 	</div>
-	<div class="modal fade" id="utilModal" tabindex="-1"
-		role="dialog" aria-labelledby="reqDetailsModal" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content"></div>
-		</div>
-	</div>
 
-
+<%@ include file="../jspf/utilmodal.jspf" %>
+<%@ include file="../jspf/users/delete.jspf" %>
 </body>
 </html>

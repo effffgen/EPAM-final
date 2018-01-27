@@ -13,12 +13,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.nure.baranov.dao.DatabaseException;
 import ua.nure.baranov.dao.factory.DAOFactory;
+import ua.nure.baranov.dao.support.DatabaseException;
 import ua.nure.baranov.entity.User;
 import ua.nure.baranov.server.Util;
 @WebServlet("/login")
-public class Login extends HttpServlet{
+public class LoginServlet extends HttpServlet{
 	private static final long serialVersionUID = 8097235372201198098L;
 	private static final Logger LOGGER = LogManager.getLogger();
 	

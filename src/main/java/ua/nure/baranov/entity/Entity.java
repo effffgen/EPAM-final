@@ -1,6 +1,9 @@
 package ua.nure.baranov.entity;
 
-public abstract class Entity {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public abstract class Entity implements Serializable{
 	protected Integer id;
 
 	@Override

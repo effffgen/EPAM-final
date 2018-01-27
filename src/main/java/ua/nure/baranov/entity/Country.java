@@ -1,5 +1,6 @@
 package ua.nure.baranov.entity;
 
+@SuppressWarnings("serial")
 public class Country extends Entity{
 	public Country(Integer id) {
 		super(id);

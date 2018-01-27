@@ -13,7 +13,7 @@
 	            $(this).addClass('badge-success');
 	        }
 	        else{
-	        	$(this).addClass('badge-warning');
+	        	$(this).addClass('badge-danger');
 	        }
 	    });
 	});
@@ -35,6 +35,7 @@
 					<thead class="blue darken-1">
 						<tr>
 							<th>Id</th>
+							<th>Name</th>
 							<th>From - to</th>
 							<th>Team status</th>
 							<c:if test="${(user.role == 'ADMINISTRATOR')}">
@@ -45,7 +46,8 @@
 					<c:forEach items="${requestScope.flights }" var="flight">
 						<tr>
 							<td>${flight.id}</td>
-							<td><a href="flightdetails?id=${flight.id}" data-toggle="modal" data-target="#utilModal">${flight.depart}
+							<td>${flight.name }</td>
+							<td><a href="flight?id=${flight.id}" data-toggle="modal" data-target="#utilModal">${flight.depart}
 									-> ${flight.destination}</a></td>
 							<td><h5>
 									<span class="badge">${flight.flightTeam.readiness ? 'Ready' : 'Not ready' }</span>
@@ -67,8 +69,8 @@
 
 	<c:if
 		test="${(user.role == 'ADMINISTRATOR' || user.role == 'OPERATOR')}">
-		<%@ include file="jspf/flight/deletemodal.jspf"%>
-		<%@ include file="jspf/flight/modifymodal.jspf"%>
+		<%@ include file="jspf/flight/delete.jspf"%>
+		<%@ include file="jspf/flight/modify.jspf"%>
 	</c:if>
 	<%@ include file="jspf/utilmodal.jspf"%>
 </body>
